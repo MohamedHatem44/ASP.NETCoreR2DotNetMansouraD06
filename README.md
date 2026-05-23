@@ -1,0 +1,1 @@
+# ASP.NETCoreR2DotNetMansouraD06
