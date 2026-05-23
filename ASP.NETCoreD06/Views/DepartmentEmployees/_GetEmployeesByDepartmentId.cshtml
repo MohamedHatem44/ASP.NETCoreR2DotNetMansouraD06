@@ -1,0 +1,26 @@
+﻿@model List<DepartmentEmployeesReadVM>
+
+
+<table class="table text-center">
+    <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Age</th>
+            <th scope="col">Salary</th>
+            <th scope="col">Department</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <th scope="row">@employee.Id</th>
+                <th scope="row">@employee.Name</th>
+                <th scope="row">@employee.Age</th>
+                <th scope="row">@employee.Salary</th>
+                <th scope="row">@employee.Department</th>
+            </tr>
+        }
+    </tbody>
+</table>

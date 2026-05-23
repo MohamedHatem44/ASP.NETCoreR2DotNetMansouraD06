@@ -21,6 +21,9 @@ namespace ASP.NETCoreD06.ViewModels.Employee
         public decimal Salary { get; set; }
 
         [Required]
+        public IFormFile? Image { get; set; }
+
+        [Required]
         public int DepartmentId { get; set; }
         #endregion
         /*------------------------------------------------------------------*/

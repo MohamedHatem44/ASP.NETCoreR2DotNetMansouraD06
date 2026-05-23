@@ -10,7 +10,6 @@ namespace ASP.NETCoreD06.Controllers
     public class EmployeeController : Controller
     {
         /*------------------------------------------------------------------*/
-        // Context => DB => Data Access
         private readonly AppDbContext db = new AppDbContext();
         /*------------------------------------------------------------------*/
         [HttpGet]
@@ -26,6 +25,7 @@ namespace ASP.NETCoreD06.Controllers
                     Name = e.Name,
                     Age = e.Age,
                     Salary = e.Salary,
+                    ImageURL = e.ImageUrl,
                     Department = e.Department!.Name
                 }).ToList();
 
@@ -58,39 +58,8 @@ namespace ASP.NETCoreD06.Controllers
             return View(employeeReadVM);
         }
         /*------------------------------------------------------------------*/
-        // V01
-        // Create Employee
-        // Get => Show Form
         [HttpGet]
-        public IActionResult CreateV01()
-        {
-            ViewBag.Departments = new SelectList(db.Departments, "Id", "Name");
-            return View();
-        }
-        /*------------------------------------------------------------------*/
-        // V01
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult CreateV01(Employee employee)
-        {
-            ModelState.Remove("Department");
-            // Validation
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Departments = new SelectList(db.Departments, "Id", "Name");
-                return View(employee);
-            }
-            db.Employees.Add(employee);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
-        /*------------------------------------------------------------------*/
-        // V02
-        // Create Employee
-        // Get => Show Form
-        // Get Departments => For DropdownList
-        [HttpGet]
-        public IActionResult CreateV02()
+        public IActionResult Create()
         {
             var employeeCreateVM = new EmployeeCreateVM
             {
@@ -99,10 +68,9 @@ namespace ASP.NETCoreD06.Controllers
             return View(employeeCreateVM);
         }
         /*------------------------------------------------------------------*/
-        // V02
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateV02(EmployeeCreateVM employeeCreateVM)
+        public IActionResult Create(EmployeeCreateVM employeeCreateVM)
         {
             // Validation
             if (!ModelState.IsValid)
@@ -114,13 +82,37 @@ namespace ASP.NETCoreD06.Controllers
                 return View(employeeCreateVM);
             }
 
-            // employeeCreateVM => Don't Have Id
-            // Map From VM To Domain Model
+            // Create Unique Name For Image
+            // AAEB0DC1-8262-4BAA-B5AD-FED3E1281831.png
+            var unqiueFileName = Guid.NewGuid().ToString() + Path.GetExtension(employeeCreateVM.Image!.FileName);
+
+            // Define Path To Save Image
+            string folderPath = Path.Combine(Directory.GetCurrentDirectory(),
+                "wwwroot",
+                "Images",
+                "Employees");
+
+            // Create Folder If Not Exist
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            // Define Full Path To Save Image
+            string filePath = Path.Combine(folderPath, unqiueFileName);
+
+            // Write Image To The Defined Path
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                employeeCreateVM.Image.CopyTo(stream);
+            }
+
             var employee = new Employee
             {
                 Name = employeeCreateVM.Name,
                 Age = employeeCreateVM.Age,
                 Salary = employeeCreateVM.Salary,
+                ImageUrl = unqiueFileName,
                 DepartmentId = employeeCreateVM.DepartmentId
             };
 

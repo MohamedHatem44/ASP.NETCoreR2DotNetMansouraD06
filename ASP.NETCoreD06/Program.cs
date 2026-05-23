@@ -30,6 +30,18 @@ namespace ASP.NETCoreD06
                 pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
+            //app.MapControllerRoute(
+            //    name: "default",
+            //    pattern: "{controller=Home}/{action=Index}/{id:int?}/{name:alpha?}")
+            //    .WithStaticAssets();
+
+            //app.MapControllerRoute("CustomRoute",
+            //    "emp/{id:int}", new
+            //    {
+            //        controller = "Employee",
+            //        action = "Details"
+            //    });
+
             app.Run();
         }
     }
